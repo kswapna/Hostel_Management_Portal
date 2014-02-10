@@ -1,0 +1,216 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+
+Design by Free CSS Templates
+http://www.freecsstemplates.org
+Released for free under a Creative Commons Attribution 2.5 License
+
+Title      : Interlude
+Version    : 1.0
+Released   : 20080903
+Description: A multi-column, fixed-width design for 800x600 resolutions.
+
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <title>
+   {{=response.title or request.application}}
+  </title>
+  {{response.files.append(URL(request.application,'static','plugin_layouts/layouts/Interlude/default.css'))}}
+  {{response.files.append(URL('static','plugin_layouts/superfish.js'))}}
+  {{include 'web2py_ajax.html'}}
+  <style>
+ul.web2py-menu-vertical { width: 150px; position: relative; top:1em; left:1em;  z-index:30; border:0; margin:0; padding: 0; list-style: none; text-decoration: none;}
+ul.web2py-menu-vertical li { margin:0; padding:0; border:0; width: 150px; background: black; text-align:left;}
+ul.web2py-menu-vertical li a { margin:0; padding: 1px 3px 1px 3px; border:0; width: 144px; color: white; font-size:12px;}
+div.flash { position: fixed; float: right; padding: 10px; top: 10px; right: 30px; opacity: 0.75; margin: 10px 10px 10px 10px; text-align: center; clear: both; color: #fff; font-size: 11pt; text-align: center; vertical-align: middle; cursor: pointer; background: black; border: 2px solid #fff; -moz-border-radius: 5px; -webkit-border-radius: 5px; z-index: 2; }
+div.error { background-color: red; color: white; padding: 3px; }
+.auth_navbar { text-align:right; z-index:20; position: absolute; top: 2px; right:30px; border:0; padding:0 }
+  </style>
+ </head>
+ 
+ <body>
+
+ <div style="float:right; margin-right:3.5em; margin-top:2em; font-size: 17pt; ">
+
+  <form  name="searchform" id="fm" >
+
+<select name="cars" id="df" onchange="ls()">
+<option value="name">NAME</option>
+<option value="rollno">ROLL NO</option>
+<option value="roomno">ROOM NO</option>
+
+</select><span id="sp">     </span>
+     <input type="button" onclick="p()" value="submit"/> 
+
+      <br />
+
+  
+<input type="text" name="name" id="name" autocomplete="off"/> 
+
+<div  id="suggestions"
+      class="suggestions"></div>
+</form>
+    </div>
+    <style>
+#suggestions { position: relative; }
+.suggestions { background: white;  }
+.suggestions DIV { padding: 2px 4px 2px 4px; }
+</style>
+
+
+     <script>
+
+
+
+         $("#name").keyup(function(event){
+    if(event.keyCode == 13){
+        p();
+    }
+          var sp=document.getElementById("df");
+
+
+        if(sp.value=="name")
+        {
+        ajax('month_selector', ['name'], 'suggestions')
+        }
+    }
+);
+     </script>
+  <!-- start header -->
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+<script>
+var y2=document.getElementById("sp");
+function ls()
+{
+var x=document.getElementById("df");
+
+if(x.value=="roomno")
+{y2.innerHTML='<select name="hostel" id="df1" ><option value="OBH">OBH</option><option value="GH">GH</option>'+
+'<option value="NBH">NBH</option><option value="BU">BU</option></select>';
+}
+else
+y2.innerHTML="   ";
+
+}
+
+</script>
+<script>
+    function p()
+    {
+	var k=document.getElementById('fm');
+    var sp=document.getElementById("df");
+
+
+        if(sp.value=="name")
+        {
+        k.action="searchbyname";
+        document.searchform.submit();
+        }
+        else if (sp.value=="rollno")
+            {
+             k.action="searchbyroll";
+        document.searchform.submit();
+            }
+             else if (sp.value=="roomno")
+            {
+             k.action="searchbyroom";
+        document.searchform.submit();
+            }
+
+    }
+
+
+    </script>
+
+
+      
+        
+          
+            
+                <!-- start header -->
+  {{try:}}{{=auth.navbar(action=URL('default','user'))}}{{except:pass}}
+
+  <!-- start header -->
+  <div id="header">
+   <div id="logo">
+    <h1>
+     {{#=response.title or reque}}
+     hostel portal
+    </h1>
+    <p>
+    
+         {{#     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;welcomes you}}
+ 
+    </p>
+   </div>
+   <div id="menu">
+    {{=MENU(response.menu,_class='web2py-menu')}}
+    <script>
+      jQuery(document).ready(function(){jQuery('ul.web2py-menu').superfish({delay:400});});
+    </script>
+   </div>
+  </div>
+  <hr />
+  <!-- end header -->
+  <!-- start page -->
+  <div id="wrapper">
+   <div id="page">
+    <!-- start content -->
+    <div id="content">
+     <div class="flash">{{=response.flash or ''}}</div>
+     
+     
+Logged in as {{=A(session.name,_href=URL('viewprofile',args=session.roll_no))}}
+       
+    <h3 style="display:inline;">    {{=A('Logout',_href=URL(r=request,f='logout'))}}</h3>
+        <br />
+     
+     {{include}}
+        {{#chetta}}
+        
+        
+        
+        {{#chetta}}
+       
+    </div>
+    <!-- end content -->
+    <!-- start sidebar -->
+    
+    <br style="clear: both;" />
+   </div>
+  </div>
+  <!-- end page -->
+<!--chetta-->>
+ 
+ 
+ 
+ </body>
+</html>
+
+
+
+{{d=[]}}
+{{a=MENU(response.staff,_class='web2py-menu')}}{{b=MENU(response.student,_class='web2py-menu')}}{{c=MENU(response.admin,_class='web2py-menu')}}     {{d=d+[b]+[b]+[b]+[a]+[c]}}
+{{q=d[session.login]}}
+<script>
+function s()
+    {
+        document.getElementById("menu").innerHTML='{{=q}}' 
+    };
+</script>
+
+
+<body onload="s()";></body>

@@ -1,0 +1,894 @@
+# -*- coding: utf-8 -*-
+### required - do no delete
+
+response.title="IIIT-H Hostel Management Portal"
+
+from gluon.sqlhtml import form_factory
+import socket
+import re
+session.pdf1=0
+session.place='All'
+
+CAS.login_url='https://login.iiit.ac.in/cas/login'
+CAS.check_url='https://login.iiit.ac.in/cas/validate'
+CAS.logout_url='https://login.iiit.ac.in/cas/logout'
+CAS.my_url='http://127.0.0.1:8000/hostel/default/login'
+
+if not session.token and not request.function=='login':
+   redirect(URL(r=request, f='login'))
+#session.name="aaa"
+#session.token="chaluvadibhanu.dev@students.iiit.ac.in"
+#session.login = 3 
+
+
+#login with cas
+def login():
+    session.login = 0 
+    session.token = CAS.login(request)
+    name=db(db.students.email==str(session.token)).select(db.students.ALL);
+    session.name=name[0].name
+    session.roll_no=name[0].roll_no
+    session.room=name[0].room_no
+    print session.room
+    session.hs=name[0].hostel
+
+    session.email = session.token.split('@')[0]
+    session.name = session.token.split('@')[0]
+    redirect(URL(r=request, f='index'))
+    return dict()
+    
+def logout():
+    session.token=None
+    session.name=""
+    CAS.logout()
+
+
+def user(): return dict(form=auth())
+def download(): return response.download(request,db)
+def call(): return service()
+### end requires
+#@auth.requires_login()
+
+#creating a new poll
+def poll():
+    return dict()
+#@auth.requires_login()
+#voting a poll
+def sr():
+    l=len(request.args)
+    db.poll.insert(question=request.args(0),options_no=l-1,posted_by=session.name)
+    q=db(db.poll.question==request.args(0)).select(db.poll.ALL)
+    pid=q[0].id
+    i=1
+    while i<l :
+        db.options.insert(option=request.args(i),qid=pid)
+        i=i+1
+
+     
+    if session.login==2:
+        db(db.poll.id==pid).update(flag=1)    
+        session.flash="New Poll Created"
+    else:
+        db(db.poll.id==pid).update(flag=0)    
+        session.flash="Your request has been sent"
+    #redirect(URL(r=request,f='index'))
+    return dict(a=request.args,l=l)
+
+#@auth.requires_login()
+
+#search by roll
+def searchbyroll():
+    roll=request.vars.name
+    print roll
+    query=(db.students.roll_no.startswith(roll))
+    set=db(query)
+    result=set.select()
+    return dict(result=result)
+
+
+#request for doctors appointment
+def medreq():
+    form=SQLFORM(db.medical)
+    now = time.localtime(time.time())
+    year, month, day, hour, minute, second, weekday, yearday, daylight = now
+    db.medical.posted_by.default=session.name
+    db.medical.Date.default=datetime.datetime.today()
+    db.medical.Time.default="%02d:%02d:%02d" % (hour, minute, second)
+    db.medical.Flag.default=1
+    name=db(db.students.email==str(session.token)).select(db.students.ALL);
+    mobile=name[0].mobile
+    form.vars.mobile=mobile
+   
+    if form.accepts(request.vars,session):
+          session.flash="Request recorded"
+          redirect(URL(r=request,f='byroll'))
+    
+    return dict(form=form)
+
+#adding new doctor details
+def amedreq():
+
+    form=SQLFORM(db.medical)
+    now = time.localtime(time.time())
+    year, month, day, hour, minute, second, weekday, yearday, daylight = now
+    db.medical.posted_by.default=session.name
+    db.medical.Date.default=datetime.datetime.today()
+    db.medical.Time.default="%02d:%02d:%02d" % (hour, minute, second)
+    db.medical.Flag.default=1
+    name=db(db.students.email==str(session.token)).select(db.students.ALL);
+    mobile=name[0].mobile
+    form.vars.mobile=mobile
+    
+    doctor=db().select(db.docs.ALL)
+  
+    
+    if form.accepts(request.vars,session):
+          session.flash="Request recorded"
+          #redirect(URL(r=request,f='index'))
+    form1=SQLFORM(db.docs)
+    if form1.accepts(request.vars,session):
+          session.flash="Request recorded"
+          redirect(URL(r=request,f='amedreq'))
+    return dict(form=form,form1=form1,doctor=doctor)
+
+#participate in a poll-enter vote
+def sr1():
+    l=len(request.vars.q1Options)
+    db.poll.insert(question=request.vars.question,options_no=l,posted_by=session.name)
+    
+    print l
+    q=db(db.poll.question==request.vars.question).select(db.poll.ALL)
+    pid=q[0].id
+    i=0
+    print request.vars.q1Options
+    while i<l :
+         db.options.insert(option=request.vars.q1Options[i],qid=pid)
+         i=i+1
+    if session.login==2:
+        db(db.poll.id==pid).update(flag=1)    
+        session.flash="New Poll Created"
+    else:
+        db(db.poll.id==pid).update(flag=0)    
+        session.flash="Your request has been sent"
+
+#view medical requests-for staff
+def vmedical():
+    return dict(form=db(db.medical.Flag==1).select(db.medical.ALL,orderby=db.medical.Doctor|~ db.medical.id))
+
+#search a student by room
+def searchbyroom():
+    room=request.vars.name
+    hostel=request.vars.hostel
+    print hostel
+    query=(db.students.room_no==room)&(db.students.hostel==hostel)
+    set=db(query)
+    result=set.select()
+    return dict(result=result)
+
+#search a student by name
+def searchbyname():
+    name=request.vars.name.lower()
+    query=db.students.name.lower().startswith(name)
+    set=db(query)
+    result=set.select()
+    return dict(result=result)
+#mark complaint as completed-by staff
+def markcom():
+     if type(request.vars.option)==str:
+         l=1
+         db(db.complaint.id==request.vars.option).update(Flag=0) 
+         
+     else:
+         l=len(request.vars.option)
+         for i in range(l):
+             db(db.complaint.id==request.vars.option[i]).update(Flag=0) 
+     redirect(URL(r=request,f='staff_vcomplaint'))
+     return dict(form=l)
+#mark a medical requwst as processed-staff
+def markcom_med():
+     if type(request.vars.option)==str:
+         l=1
+         db(db.medical.id==request.vars.option).update(Flag=0) 
+         
+     else:
+         l=len(request.vars.option)
+         for i in range(l):
+             db(db.medical.id==request.vars.option[i]).update(Flag=0) 
+     redirect(URL(r=request,f='vmedical'))
+     return dict(form=l)
+
+#main function (home) this redirects  users to their respective pages(staff,admin..)
+def index():
+  session.flash=response.flash
+  if session.login==0:
+        
+
+        if db(db.admin.email==session.token).select(db.admin.ALL) :
+                session.login = 4
+                print "l"
+                redirect(URL(r=request, f='admin'))
+        
+        if db(db.puser.email==session.token).select(db.puser.ALL) :
+                session.login = 2
+                redirect(URL(r=request, f='puser'))
+  
+        
+
+                      
+        if db(db.staff.email==session.token).select(db.staff.ALL) :
+                session.login = 3
+                redirect(URL(r=request, f='staff'))
+
+        else: 
+                print "lll"
+                session.login = 1
+                redirect(URL(r=request, f='student'))
+  else:
+         if session.login==1:
+                redirect(URL(r=request, f='student'))
+                
+         if session.login==2:
+                redirect(URL(r=request, f='puser'))
+                
+         if session.login==3:
+                redirect(URL(r=request, f='staff'))
+                
+         if session.login==4:
+                redirect(URL(r=request, f='admin'))                                                 
+
+
+#view requests for polls and newsfeed -puser 
+def requests():
+    poll=db(db.poll.flag==0).select(db.poll.ALL)
+    newsfeed=db(db.news_feed.flag==0).select(db.news_feed.ALL)
+   # query=((db.poll.flag==0))
+    #query2=((db.news_feed.flag==0))
+    #newsfeed=SQLFORM.smartgrid(newsfeed=newsfeed)
+    #form1=SQLFORM.grid(query=query)
+    
+    #form2=SQLFORM.grid(query=query2)
+    if not (poll or  newsfeed):
+        session.flash="All requests processed"
+        redirect(URL(r=request,f='index'))
+    return dict(form1=poll,form2=newsfeed)
+#update status of requests of poll -puser    
+def request_poll():
+    i=request.args
+    if i[1]=="1":
+        db(db.poll.id==i[0]).update(flag=1)
+    if i[1]=="-1":
+        db(db.poll.id==i[0]).delete()
+        db(db.options.qid==i[0]).delete()
+    redirect(URL(r=request,f='requests'))
+    return dict()
+#update status of requests of newsfeed-puser
+def request_newsfeed():
+    i=request.args
+    if i[1]=="1":
+        db(db.news_feed.id==i[0]).update(flag=1)
+    if i[1]=="-1":
+        db(db.news_feed.id==i[0]).delete()
+    redirect(URL(r=request,f='requests'))
+    return dict()    
+
+
+#add or request newsfeed
+def add_news_feed():
+    form=SQLFORM(db.news_feed);
+    form.vars.posted_by=session.name
+    
+    if session.login==2:
+            form.vars.flag=1
+    else:
+            form.vars.flag=0
+            
+    if form.accepts(request.vars,session):
+        if session.login==2:
+            session.flash="Newsfeed Added"
+
+        else:
+            session.flash="Your request has been sent"
+
+        redirect(URL(r=request,f='index'))
+    return dict(form=form)
+      
+#student home page -has view of his functions(menu),polls,newsfeed
+def student():
+    variable=0
+    if request.vars.option!=None:
+        k=request.vars.option
+        l=db(db.options.id==k).select(db.options.ALL)
+        
+        la=l[0].qid
+        l=l[0].counter
+        db(db.options.id==k).update(counter=l+1)
+        l2=db(db.poll.id==la).select(db.poll.ALL)
+        l2=l2[0].counter
+        db(db.poll.id==la).update(counter=l2+1)
+        db.vote.insert(qid=la,voted_by=session.name)
+        redirect(URL(r=request,f='index'))
+    if len(request.args) > 0:
+        variable=1
+    newsfeed=db().select(db.news_feed.ALL,orderby=~db.news_feed.id)
+    polls=db().select(db.poll.ALL,orderby=~db.poll.id)
+    
+    form=SQLFORM(db.news_feed);
+    form.vars.posted_by=session.name
+    
+    if session.login==2:
+            form.vars.flag=1
+    else:
+            form.vars.flag=0
+            
+    if form.accepts(request.vars,session):
+        if session.login==2:
+            session.flash="Newsfeed Added"
+
+        else:
+            session.flash="Your request has been sent"
+
+        redirect(URL(r=request,f='index'))    
+    return dict(newsfeed=newsfeed,polls=polls,form=form,variable=variable)
+#previlised user homepage 
+def puser():
+    variable=0
+    if request.vars.option!=None:
+        k=request.vars.option
+        l=db(db.options.id==k).select(db.options.ALL)
+        
+        la=l[0].qid
+        l=l[0].counter
+        db(db.options.id==k).update(counter=l+1)
+        l2=db(db.poll.id==la).select(db.poll.ALL)
+        l2=l2[0].counter
+        db(db.poll.id==la).update(counter=l2+1)
+        db.vote.insert(qid=la,voted_by=session.name)
+        redirect(URL(r=request,f='index'))
+    if len(request.args) > 0:
+        variable=1
+    newsfeed=db().select(db.news_feed.ALL,orderby=~db.news_feed.id)
+    polls=db().select(db.poll.ALL,orderby=~db.poll.id)
+    
+    form=SQLFORM(db.news_feed);
+    form.vars.posted_by=session.name
+    
+    if session.login==2:
+            form.vars.flag=1
+    else:
+            form.vars.flag=0
+            
+    if form.accepts(request.vars,session):
+        if session.login==2:
+            session.flash="Newsfeed Added"
+
+        else:
+            session.flash="Your request has been sent"
+
+        redirect(URL(r=request,f='index'))    
+    return dict(newsfeed=newsfeed,polls=polls,form=form,variable=variable)
+ #staff homepage contains menu and enter laptop details form         
+def staff():
+    form2=SQLFORM(db.other_laptop_out)
+    if form2.accepts(request.vars,session):
+        session.flash="Laptop Details Entered"
+        redirect(URL(r=request,f='staff'))
+    form=SQLFORM(db.laptop_out)
+    if form.accepts(request.vars,session):
+        session.flash="Laptop Details Entered"
+        redirect(URL(r=request,f='show_laptop_details',args=form.vars.roll_no))
+    return dict(form=form,form2=form2)
+   
+#return a page for form view 
+def one(): 
+    return dict()
+
+
+#view edit add vacant rooms
+def vacant_rooms():
+    #request.vars=None
+    if request.vars.hostel!=None:
+        k=request.vars.hostel
+        l=request.vars.room_no
+        db.vacant_rooms.insert(hostel=k,room_no=l)
+        redirect(URL(r=request,f='vacant_rooms'))
+    form=db().select(db.vacant_rooms.ALL)
+    return dict(form=form)
+#delete vacant rooms
+def delete_vacant_rooms():
+    db(db.vacant_rooms.id==request.args[0]).delete()
+    redirect(URL(r=request,f='vacant_rooms'))
+#view vacant rooms-student
+def view_vacant_rooms():
+    return dict()
+#admin homepage has previliges 
+def admin():
+        if session.login!=4:
+            session.flash="Access Denied"
+            redirect(URL(r=request,f='index'))
+        form=SQLFORM(db.students)
+        if form.accepts(request.vars,session):
+          session.flash="Student added"
+        if request.vars:
+            m=request.vars.id
+            f=request.vars.fro
+            t=request.vars.to
+           
+            if(db(db[request.vars.fro].email==m).delete()):
+                if(t=="admin"):
+                    db.admin.insert(email=m)
+                if(t=="puser"):
+                    db.puser.insert(email=m)
+                if(t=="staff"):
+                    db.staff.insert(email=m)
+                if(t=="nuser"):
+                    db.nuser.insert(email=m)
+                session.flash="Promotion successfull"
+            else:
+                session.flash="Invalid Promotion"
+            redirect(URL('admin'))
+        return dict(form=form)    
+  
+#error page         
+def error():
+    return dict()
+    
+import datetime
+import time
+#view laptop details and edit-staff 
+def enter_laptop_details():
+    form=""
+    if request.vars.roll!=None:
+        form=db(db.laptop.roll_no==request.vars.roll).select()
+       # redirect(URL(r=request,f='index'))
+    return dict(form=form,roll=request.vars.roll)
+#delete laptop details of a student
+def delete_laptop():
+    db(db.laptop.id==request.args[0]).delete()
+    redirect(URL(r=request,f='enter_laptop_details'+'?roll='+request.args[1]))
+#add a new laptop 
+def add_laptop():
+    db.laptop.insert(roll_no=request.vars.roll,service_tag=request.vars.service_tag,company=request.vars.company)            
+    redirect(URL(r=request,f='enter_laptop_details'+'?roll='+request.vars.roll))        
+#taking laptop outside          
+def laptop_out_details():
+    form=SQLFORM(db.laptop_out)
+    if form.accepts(request.vars,session):
+        session.flash="Laptop Details Entered"
+        redirect(URL(r=request,f='show_laptop_details',args=form.vars.roll_no))
+    return dict(form=form)
+#view laptop outing records    
+def view_laptop_out_details():
+    if request.vars.number!=None:
+        n=request.vars.number
+    else:
+        n=25
+    return dict(form=db().select(db.laptop_out.ALL,limitby=(0,int(n))),number=n)
+#view student outing details
+def view_student_out_details():
+    if request.vars.number!=None:
+        n=request.vars.number
+    else:
+        n=25
+    return dict(form=db().select(db.student_out.ALL,limitby=(0,int(n))),number=n)
+#add student outing details
+def student_out_details():
+    form=SQLFORM(db.student_out)
+    if form.accepts(request.vars,session):
+        session.flash="student Details Entered"
+        if form.vars.laptop_presence=="present":
+            db.laptop_out.insert(roll_no=form.vars.roll_no,reason="outside campus")
+            redirect(URL(r=request,f='show_laptop_details',args=form.vars.roll_no))
+        else:
+            redirect(URL(r=request,f='index'))
+    return dict(form=form)
+#view students laptop details
+def show_laptop_details():
+    i=request.args
+    
+    laptop=db(db.laptop.roll_no==i[0]).select(db.laptop.ALL)
+    if not laptop:
+        session.flash="No Record Found Enter Details"
+        redirect(URL(r=request,f= 'enter_laptop_details?roll='+i[0]))
+    name=db(db.students.roll_no==i[0]).select(db.students.name)
+    
+    return dict(form=laptop,roll=i[0])
+##file a new complaint    
+def regcomplaint():
+    now = time.localtime(time.time())
+    year, month, day, hour, minute, second, weekday, yearday, daylight = now
+    db.complaint.User.default=session.name
+    db.complaint.Date.default=datetime.datetime.today()
+    db.complaint.Time.default="%02d:%02d:%02d" % (hour, minute, second)
+    db.complaint.room.default=session.room
+    db.complaint.Flag.default=1
+    form = SQLFORM(db.complaint)
+    w=0
+    if form.process().accepted:
+        session.flash = 'your complaint is registered'
+        redirect(URL(r=request,f='complaint'))
+    else:
+        w=1  
+    if not request.vars.place:
+        query=(db.complaint.User==session.name)
+        set=db(query)
+        complaints=set.select(orderby=~db.complaint.Flag|~ db.complaint.Date|~db.complaint.Time ,limitby=(0,5))
+        filtered_by="All"
+    else:
+        if(request.vars.place=="All"):
+            query=(db.complaint.User==session.name)
+        else:
+            query=(db.complaint.User==session.name)&(db.complaint.category==request.vars.place) 
+        set=db(query)
+        complaints=set.select(orderby=~db.complaint.Flag|~ db.complaint.Date|~db.complaint.Time,limitby=(0,5))
+        filtered_by=request.vars.place
+     
+    if not request.vars.place2:
+        query=(db.complaint.access!="Private") & (db.complaint.Flag!=0)
+        set=db(query)
+        complaints2=set.select(orderby=~ db.complaint.Date|~db.complaint.Time)
+        filtered_by2="All"
+    else:
+        if(request.vars.place2=="All"):
+            query=(db.complaint.access!="Private") & (db.complaint.Flag!=0)
+        else:
+            query=(db.complaint.access!="Private")&(db.complaint.category==request.vars.place2) & (db.complaint.Flag!=0)
+        set=db(query)
+        complaints2=set.select(orderby=~ db.complaint.Date|~db.complaint.Time)
+        filtered_by2=request.vars.place2
+    return dict(w=w,complaints=complaints,complaints2=complaints2,filtered_by=filtered_by,filtered_by2=filtered_by2,form=form)    
+ 
+#@auth.requires_login()
+#complaints view page
+def complaint():
+    if not request.vars.place:
+        query=(db.complaint.User==session.name)
+        set=db(query)
+        complaints=set.select(orderby=~db.complaint.Flag|~ db.complaint.Date|~db.complaint.Time ,limitby=(0,5))
+        filtered_by="All"
+    else:
+        if(request.vars.place=="All"):
+            query=(db.complaint.User==session.name)
+        else:
+            query=(db.complaint.User==session.name)&(db.complaint.category==request.vars.place) 
+        set=db(query)
+        complaints=set.select(orderby=~db.complaint.Flag|~ db.complaint.Date|~db.complaint.Time,limitby=(0,5))
+        filtered_by=request.vars.place
+     
+    if not request.vars.place2:
+        query=(db.complaint.access!="Private") & (db.complaint.Flag!=0)
+        set=db(query)
+        complaints2=set.select(orderby=~ db.complaint.Date|~db.complaint.Time)
+        filtered_by2="All"
+    else:
+        if(request.vars.place2=="All"):
+            query=(db.complaint.access!="Private") & (db.complaint.Flag!=0)
+        else:
+            query=(db.complaint.access!="Private")&(db.complaint.category==request.vars.place2) & (db.complaint.Flag!=0)
+        set=db(query)
+        complaints2=set.select(orderby=~ db.complaint.Date|~db.complaint.Time)
+        filtered_by2=request.vars.place2
+    return dict(complaints=complaints,complaints2=complaints2,filtered_by=filtered_by,filtered_by2=filtered_by2)
+     
+#view complaints     
+def showcomplaint():
+    return dict()
+#view private complaints
+def viewprivate():
+    if(request.args(0)=='1'):
+        query=(db.complaint.User==session.name) & (db.complaint.Flag==1)
+        set=db(query)
+        complaints=set.select()
+        return dict(complaints=complaints)
+    else:
+        if(request.vars.place=='1'):
+            query=(db.complaint.User==session.name) & (db.complaint.Flag==1)
+        else:
+            query=(db.complaint.User==session.name)&(db.complaint.category==request.vars.place) & (db.complaint.Flag==1)
+        set=db(query)
+        complaints=set.select()
+        return dict(complaints=complaints)
+#del complaint
+def delcomplaint():
+    remove = db(db.complaint.id==request.args(0)).delete()
+    if remove:
+        response.flash='complaint deleted succesfully'
+        redirect(URL('viewprivate'))
+    else:
+        response.flash='image deletion failed'
+def viewpublic():
+    query=(db.complaint.access!="Private") & (db.complaint.Flag!=0)
+    set=db(query)
+    complaints=set.select()
+    return dict(complaints=complaints)
+#mark as completed
+def metcomplaint():
+    db(db.complaint.id==request.args(0)).update(Flag=0)
+    response.flash='Removed the complaint succesfully'
+    redirect(URL('viewprivate'))
+def search():
+    return dict()
+def byname():
+    return dict()
+#by blood grp search and roll_no search
+def byroll():
+#here complaints means students list result
+    complaints=""
+    if request.vars.blood_grp!=None:
+        if request.vars.roll_no!=None:
+            query= ( db.students.roll_no.startswith(request.vars.roll_no) ) & (db.students.blood_grp==request.vars.blood_grp)
+            set=db(query)
+            complaints=set.select()
+        else:
+            complaints=db(db.students.blood_grp==response.vars.blood_grp).select()
+            
+    return dict(result=complaints,grp=request.vars.blood_grp,roll=request.vars.roll_no)
+            
+    return dict()
+def byroom():
+    return dict()
+
+#profile of a student
+def viewprofile():
+    query=(db.students.roll_no==request.args(0))
+    set=db(query)
+    prof=set.select()
+    return dict(prof=prof)
+#edit profile-admin
+def editprofile():
+    query=(db.students.roll_no==request.vars.roll)
+    set=db(query)
+    prof=set.select()
+    studentid=prof[0].id
+    form=SQLFORM(db.students,studentid)
+    if form.accepts(request.vars,session):
+          session.flash="Profile edited"
+          redirect(URL(r=request,f='index'))
+    return dict(form=form)
+#view complaints-admin
+def vcomplaint():
+    m=""
+    n=""
+    
+    if(session.pdf1==0):
+        session.place=request.vars.place
+    if(session.place==None):
+        complaints = db().select(db.complaint.ALL,orderby=~db.complaint.Date|~db.complaint.Time)
+        filtered_by="All"
+    else:
+         if(session.place=='1'):
+            m=request.vars.end
+            n=request.vars.start
+            if(m==''):
+                m=datetime.datetime.today()
+            n=request.vars.start
+            if(n==''):
+               today = datetime.datetime.today()
+               DD = datetime.timedelta(days=90)
+               n=today - DD
+            query=(db.complaint.Date>=n)&(db.complaint.Date<=m)
+            set=db(query)
+            complaints=set.select(orderby=~db.complaint.Date|~db.complaint.Time)
+            filtered_by="All"
+         else:
+            m=request.vars.end
+            n=request.vars.start
+            if(m==''):
+                m=datetime.datetime.today()
+            n=request.vars.start
+            if(n==''):
+               today = datetime.datetime.today()
+               DD = datetime.timedelta(days=90)
+               n=today - DD
+            query=(db.complaint.category==session.place)& (db.complaint.Date>=n)&(db.complaint.Date<=m)
+            set=db(query)
+            complaints=set.select(orderby=~db.complaint.Date|~db.complaint.Time)
+            filtered_by=session.place
+            
+    if session.pdf1==1 :
+        o=[]
+        for row in complaints:
+            o=o+[row.access]
+            o=o+[row.category]
+            o=o+[row.AvailableTime]
+            o=o+[row.complaint_body]
+            print 1
+            print o
+        return o
+    else:
+        return dict(complaints=complaints,filtered_by=filtered_by,start=request.vars.start,end=request.vars.end)    
+
+#view complaints-staff    
+def staff_vcomplaint():
+    if(session.pdf1==0):
+        session.place=request.vars.place
+    if(session.place==None):
+        complaints = db(db.complaint.Flag==1).select(db.complaint.ALL,orderby=~ db.complaint.Date|~db.complaint.Time)
+        filtered_by="ALL"
+    else:
+         if(session.place=='ALL'):
+           complaints = db(db.complaint.Flag==1).select(db.complaint.ALL,orderby=~ db.complaint.Date|~db.complaint.Time)
+           filtered_by="ALL"
+         else:
+            query=(db.complaint.category==request.vars.place)& (db.complaint.Flag==1)
+
+            set=db(query)
+            complaints=set.select(orderby=~db.complaint.Date|~db.complaint.Time)
+            filtered_by=session.place
+    o=[]
+    print session.pdf1
+    if session.pdf1==1 :
+        for row in complaints:
+            o=o+[row.access]
+            o=o+[row.category]
+            o=o+[row.AvailableTime]
+            o=o+[row.complaint_body]
+            print 1
+            print o
+        return o
+    else:
+            return dict(complaints=complaints,filtered_by=filtered_by)
+            
+                
+ #takes month as input-search-ajax                       
+def month_input():
+    return dict()
+#ajax search
+def month_selector():
+    if not request.vars.name:
+        return ''
+    pattern = request.vars.name.capitalize() + '%'
+    selected = [row.name for row in db(db.students.name.like(pattern)).select()]
+    return ''.join([DIV(k,
+                 _onclick="jQuery('#name').val('%s')" % k,
+                 _onmouseover="this.style.backgroundColor='yellow'",
+                 _onmouseout="this.style.backgroundColor='white'"
+                 ).xml() for k in selected])
+
+
+#rules edit,view
+def rules():
+    rules=db().select(db.rules.ALL)
+    form = SQLFORM(db.rules)
+    if form.process().accepted:
+        session.flash = 'New rule added'
+        redirect(URL(r=request,f='rules'))
+    else:
+        w=1  
+    return dict(rules=rules,form=form)
+#del rule    
+def delrule():
+    remove = db(db.rules.id==request.args(0)).delete()
+    if remove:
+        session.flash='rule deleted succesfully'
+        redirect(URL('rules'))
+    else:
+        session.flash='rule deletion failed'
+#add rule
+def uprule():
+    m=request.args(0)
+    for k in db(db.rules.id==m).select():
+        db.rules.rule.default=k.rule
+    form = SQLFORM(db.rules)
+    if form.process().accepted:
+        response.flash = 'Rule Updated'
+        db(db.rules.id==request.args(0)).delete()
+        redirect(URL(r=request,f='rules'))   
+    return dict(form=form)
+    
+
+#del a doctor name   
+def deldoc():
+    remove = db(db.docs.id==request.args(0)).delete()
+    if remove:
+        session.flash='Entry deleted succesfully'
+        redirect(URL('amedreq'))
+    else:
+        session.flash='entry deletion failed'
+#add a doctor name
+def updoc():
+    m=request.args(0)
+    for k in db(db.docs.id==m).select():
+        db.docs.Doctor_Name.default=k.Doctor_Name
+        db.docs.Phone_No.default=k.Phone_No
+        db.docs.Available_day_and_time.default=k.Available_day_and_time
+    form = SQLFORM(db.docs)
+    if form.process().accepted:
+        response.flash = 'Entry Updated'
+        db(db.docs.id==request.args(0)).delete()
+        redirect(URL(r=request,f='amedreq'))   
+    return dict(form=form)
+
+#view rules-students
+def studentrules():
+    rules=db().select(db.rules.ALL)
+    return dict(rules=rules)
+    
+    
+#promote users to puser/admin/staff/demote-admin   
+def promote():
+        if request.vars:
+            m=request.vars.id
+            f=request.vars.fro
+            t=request.vars.to
+            if(db(db[request.vars.fro].email==m).delete()):
+                if(t=="admin"):
+                    db.admin.insert(email=m)
+                if(t=="puser"):
+                    db.puser.insert(email=m)
+                if(t=="staff"):
+                    db.staff.insert(email=m)
+                if(t=="user"):
+                    db.nuser.insert(email=m)
+                session.flash="Promotion successfull"
+            else:
+                session.flash="Invalid Promotion"
+            redirect(URL('promote'))
+        return dict()
+
+
+#pdf generator
+def listing():
+    response.title = "Complaints"
+    l=request.vars.function
+    session.pdf1=1
+    session.place=request.vars.place
+    print session.pdf1
+    o=eval(l)()
+    session.place=None
+    session.pdf1=0
+    print o
+    # define header and footers:
+    head = THEAD(TR(TH("User",_width="10%"), 
+                    TH("Category",_width="10%"),
+                    TH("Time",_width="10%"),
+                    TH("Complaint",_width="70%"), 
+                    _bgcolor="#A0A0A0"))
+    foot = TFOOT(TR(TH("Footer 1",_width="10%"), 
+                    TH("Footer 2",_width="10%"),
+                    TH("Footer 4",_width="10%"),
+                    TH("Footer 3",_width="70%"),
+                    _bgcolor="#E0E0E0"))
+    
+    # create several rows:
+    rows = []
+    i=-4
+    k=len(o)/4
+    
+    for i1 in range(k):
+        print "poi"
+        i=i+4
+        col = i % 4 and "#F0F0F0" or "#FFFFFF"
+        rows.append(TR(TD(o[i],_align="center"),
+                           TD(o[i+1] ,_align="center"),
+                            TD(o[i+2] ,_align="center"),
+                       TD(o[i+3], _align="center"),
+                       _bgcolor=col)) 
+
+    # make the table object
+    body = TBODY(*rows)
+    table = TABLE(*[head,foot, body], 
+                  _border="1", _align="center", _width="100%")
+
+    if request.extension=="pdf":
+        from gluon.contrib.pyfpdf import FPDF, HTMLMixin
+
+        # define our FPDF class (move to modules if it is reused  frequently)
+        class MyFPDF(FPDF, HTMLMixin):
+            def header(self):
+                self.set_font('Arial','B',15)
+                self.cell(0,10, response.title ,1,0,'C')
+                self.ln(20)
+                
+            def footer(self):
+                self.set_y(-15)
+                self.set_font('Arial','I',8)
+                txt = 'Page %s of %s' % (self.page_no(), self.alias_nb_pages())
+                self.cell(0,10,txt,0,0,'C')
+                    
+        pdf=MyFPDF()
+        pdf.add_page()
+        pdf.write_html(str(XML(table, sanitize=True)))
+        response.headers['Content-Type']='application/pdf'
+        return pdf.output(dest='S')
+    else:
+        return dict(table=table)

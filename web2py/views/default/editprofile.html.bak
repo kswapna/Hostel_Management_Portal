@@ -1,0 +1,6 @@
+{{extend 'newlayout.html'}}
+{{=form}}
+<h3>{{=A('Cancel',_href=URL(r=request,f='index'))}}
+
+
+<form action="" enctype="multipart/form-data" method="post">or import from csv file <input name="csvfile" type="file" /><input name="table" type="hidden" value="students" /><input type="submit" value="import" /></form>

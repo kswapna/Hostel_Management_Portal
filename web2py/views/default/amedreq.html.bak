@@ -1,0 +1,35 @@
+{{extend 'newlayout.html'}}
+
+
+
+<div style="float:left; margin-right:3.5em; margin-top:2em; font-size: 10pt; ">
+<table border="1" width="150%" name="d">
+<tr>
+  <th>Sr.No</th>
+  <th>Doctor Name</th>
+  <th>Doctor Category</th>
+  <th>Available Day and Time</th>
+  <th style="text-align: center;">Delete</th>
+ <th style="text-align: center;">Update</th>
+
+</tr>
+ {{c=1}}
+  {{for row in doctor:}}
+ 
+  <tr>
+  <td>{{=c}} </td>
+  {{c=c+1}}
+  <td>{{=row.Doctor_Name}} </td>
+  <td>{{=row.Phone_No}} </td>
+  <td>{{=row.Available_day_and_time}} </td>
+  <td style="text-align: center;"> {{=A("X", _href=URL("deldoc",args=row.id),_style="color:red;")}}</font></td>
+  <td style="text-align: center;"> {{=A("Edit", _href=URL("updoc",args=row.id),_style="color:green;")}}</font></td>
+ 
+  </tr>
+  {{pass}}
+</table>
+</div>
+<div style="float:right; margin-right:5em; margin-top:2em; font-size: 12pt; ">
+<bold>Add a New Entry :</bold>
+{{=form1}}
+</div>

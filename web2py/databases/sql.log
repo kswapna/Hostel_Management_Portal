@@ -1,0 +1,310 @@
+timestamp: 2012-10-11T22:34:33.042888
+CREATE TABLE auth_user(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username CHAR(512),
+    first_name CHAR(512),
+    last_name CHAR(512),
+    email CHAR(512),
+    password CHAR(512),
+    created_on TIMESTAMP,
+    modified_on TIMESTAMP,
+    registration_key CHAR(512),
+    reset_password_key CHAR(512),
+    registration_id CHAR(512)
+);
+success!
+timestamp: 2012-10-11T22:34:33.173574
+CREATE TABLE auth_group(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    role CHAR(512),
+    description TEXT
+);
+success!
+timestamp: 2012-10-11T22:34:33.319630
+CREATE TABLE auth_membership(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER REFERENCES auth_user(id) ON DELETE CASCADE,
+    group_id INTEGER REFERENCES auth_group(id) ON DELETE CASCADE
+);
+success!
+timestamp: 2012-10-11T22:34:33.442289
+CREATE TABLE auth_permission(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    group_id INTEGER REFERENCES auth_group(id) ON DELETE CASCADE,
+    name CHAR(512),
+    table_name CHAR(512),
+    record_id INTEGER
+);
+success!
+timestamp: 2012-10-11T22:34:33.565374
+CREATE TABLE auth_event(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    time_stamp TIMESTAMP,
+    client_ip CHAR(512),
+    user_id INTEGER REFERENCES auth_user(id) ON DELETE CASCADE,
+    origin CHAR(512),
+    description TEXT
+);
+success!
+timestamp: 2012-10-11T22:34:33.699369
+CREATE TABLE auth_cas(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER REFERENCES auth_user(id) ON DELETE CASCADE,
+    created_on TIMESTAMP,
+    service CHAR(512),
+    ticket CHAR(512),
+    renew CHAR(1)
+);
+success!
+timestamp: 2012-10-11T22:38:25.936734
+CREATE TABLE comment(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id CHAR(512) UNIQUE,
+    complaint_body TEXT,
+    access CHAR(512),
+    category CHAR(512)
+);
+success!
+timestamp: 2012-10-11T22:47:00.102161
+CREATE TABLE complaint(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id CHAR(512) UNIQUE,
+    access CHAR(512),
+    category CHAR(512),
+    complaint_body TEXT
+);
+success!
+timestamp: 2012-10-11T23:43:07.304081
+ALTER TABLE complaint ADD time TIME;
+timestamp: 2012-10-11T23:43:07.490310
+ALTER TABLE complaint ADD date DATE;
+timestamp: 2012-10-11T23:54:30.396080
+ALTER TABLE complaint ADD datetime DATE;
+timestamp: 2012-10-12T02:10:07.640901
+ALTER TABLE complaint ADD user CHAR(512);
+timestamp: 2012-10-12T18:26:46.523154
+ALTER TABLE complaint ADD available_time TIME;
+timestamp: 2012-10-13T18:50:16.696099
+CREATE TABLE students(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name CHAR(512),
+    roll_no CHAR(512),
+    room_no CHAR(512),
+    email CHAR(512),
+    blood_grp CHAR(512),
+    hostel CHAR(512)
+);
+success!
+timestamp: 2012-10-14T00:22:08.324550
+ALTER TABLE students ADD file CHAR(512);
+timestamp: 2012-10-14T01:23:35.501449
+ALTER TABLE students ADD branch CHAR(512);
+timestamp: 2012-10-14T13:59:32.882153
+ALTER TABLE complaint ADD flag INTEGER;
+timestamp: 2012-10-14T18:37:27.588246
+CREATE TABLE laptop(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    roll_no CHAR(512),
+    company CHAR(512),
+    service_tag CHAR(512)
+);
+success!
+timestamp: 2012-10-14T18:37:27.718864
+CREATE TABLE laptop_out(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    roll_no CHAR(512),
+    out_time TIMESTAMP,
+    reason CHAR(512)
+);
+success!
+timestamp: 2012-10-14T18:37:27.851978
+CREATE TABLE student_out(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    roll_no CHAR(512),
+    out_time TIMESTAMP,
+    reason CHAR(512),
+    laptop_presense CHAR(512)
+);
+success!
+timestamp: 2012-10-14T21:57:42.238654
+ALTER TABLE student_out ADD laptop_presence CHAR(512);
+timestamp: 2012-10-15T14:50:24.627000
+CREATE TABLE news_feed(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    posted_by CHAR(512),
+    image CHAR(512),
+    description CHAR(512)
+);
+success!
+timestamp: 2012-10-15T15:09:10.180000
+ALTER TABLE news_feed ADD title CHAR(512);
+timestamp: 2012-10-15T17:30:07.901000
+CREATE TABLE poll(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Title CHAR(512),
+    posted_by CHAR(512),
+    question CHAR(512),
+    options_no INTEGER,
+    counter INTEGER
+);
+success!
+timestamp: 2012-10-15T17:30:07.913000
+CREATE TABLE options(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    option CHAR(512),
+    qid CHAR(512),
+    counter INTEGER
+);
+success!
+timestamp: 2012-10-16T12:18:47.852000
+ALTER TABLE news_feed ADD flag INTEGER;
+timestamp: 2012-10-16T12:25:03.796000
+ALTER TABLE poll ADD flag INTEGER;
+timestamp: 2012-10-17T12:21:09.921000
+CREATE TABLE vote(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    voted_by CHAR(512),
+    qid INTEGER
+);
+success!
+timestamp: 2012-11-12T22:15:10.621048
+CREATE TABLE admin(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email CHAR(512)
+);
+success!
+timestamp: 2012-11-12T22:15:10.826789
+CREATE TABLE puser(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email CHAR(512)
+);
+success!
+timestamp: 2012-11-12T22:15:10.994190
+CREATE TABLE vacant_rooms(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    hostel CHAR(512),
+    room_no CHAR(512),
+    date TIMESTAMP
+);
+success!
+timestamp: 2012-11-12T22:15:11.155279
+CREATE TABLE features(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    feature CHAR(512),
+    status CHAR(1),
+    request_newsfeed CHAR(1),
+    request_poll CHAR(1),
+    request_vacant_rooms CHAR(1),
+    request_edit_profile CHAR(1),
+    display_vacant_rooms CHAR(1),
+    display_guestrooms CHAR(1),
+    request_guestrooms CHAR(1),
+    complaint_completed_to_user CHAR(1),
+    complaint_completed_to_staff CHAR(1)
+);
+success!
+timestamp: 2012-11-12T22:15:11.305546
+CREATE TABLE vacant_rooms_request(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    room_no CHAR(512),
+    hostel CHAR(512),
+    requested_by CHAR(512)
+);
+success!
+timestamp: 2012-11-12T22:15:11.456241
+CREATE TABLE available_guest_rooms(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    hostel CHAR(512),
+    room_no CHAR(512)
+);
+success!
+timestamp: 2012-11-12T22:15:11.608272
+CREATE TABLE booked_guest_rooms(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    hostel CHAR(512),
+    room_no CHAR(512),
+    booked_by CHAR(512),
+    city_from CHAR(512),
+    from_date TIMESTAMP,
+    to_date TIMESTAMP,
+    flag CHAR(512)
+);
+success!
+timestamp: 2012-11-13T16:26:24.372901
+ALTER TABLE vacant_rooms_request ADD date TIMESTAMP;
+timestamp: 2012-11-13T16:28:03.394258
+ALTER TABLE vacant_rooms_request ADD status CHAR(1);
+timestamp: 2012-11-13T23:18:24.259656
+ALTER TABLE complaint ADD available_time_24hr TIME;
+timestamp: 2012-11-13T23:19:21.764840
+ALTER TABLE complaint ADD available_time_ TIME;
+timestamp: 2012-11-13T23:21:14.556837
+ALTER TABLE complaint ADD available_time_hh_mm_ss TIME;
+timestamp: 2012-11-13T23:21:54.954072
+ALTER TABLE complaint ADD available_time_h_m_s TIME;
+timestamp: 2012-11-13T23:22:23.294921
+ALTER TABLE complaint ADD availabletime_h_m_s TIME;
+timestamp: 2012-11-14T03:50:20.279284
+ALTER TABLE students ADD mobile INTEGER;
+timestamp: 2012-11-14T03:50:20.474950
+CREATE TABLE medical(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    posted_by CHAR(512),
+    Doctor CHAR(512),
+    Mobile INTEGER
+);
+success!
+timestamp: 2012-11-14T04:16:49.982599
+ALTER TABLE medical ADD flag INTEGER;
+timestamp: 2012-11-14T04:16:50.200069
+ALTER TABLE medical ADD time TIME;
+timestamp: 2012-11-14T04:16:50.334683
+ALTER TABLE medical ADD date DATE;
+timestamp: 2012-11-14T04:54:42.050669
+ALTER TABLE complaint ADD availabletime TIME;
+timestamp: 2012-11-14T20:57:58.664075
+CREATE TABLE other_laptop_out(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    roll_no CHAR(512),
+    out_time TIMESTAMP,
+    reason CHAR(512),
+    laptop_company CHAR(512),
+    laptop_service_tag CHAR(512)
+);
+success!
+timestamp: 2012-11-15T05:24:20.413481
+CREATE TABLE rules(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    rule TEXT
+);
+success!
+timestamp: 2012-11-15T05:24:20.656154
+CREATE TABLE docs(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Doctor_Name CHAR(512),
+    Phone_No CHAR(512),
+    Available_day_and_time CHAR(512)
+);
+success!
+timestamp: 2012-11-15T15:59:43.994070
+CREATE TABLE nuser(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email CHAR(512)
+);
+success!
+timestamp: 2012-11-15T16:11:32.677852
+CREATE TABLE staff(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email CHAR(512)
+);
+success!
+timestamp: 2012-11-16T11:46:30.255699
+ALTER TABLE medical ADD category CHAR(512);
+timestamp: 2012-11-16T11:46:30.474931
+ALTER TABLE docs ADD doctor CHAR(512);
+timestamp: 2012-11-16T11:49:22.781821
+ALTER TABLE docs ADD ategory CHAR(512);
+timestamp: 2012-11-16T11:57:15.910081
+ALTER TABLE docs ADD category CHAR(512);
+timestamp: 2012-11-16T12:10:39.646179
+ALTER TABLE complaint ADD room CHAR(512);

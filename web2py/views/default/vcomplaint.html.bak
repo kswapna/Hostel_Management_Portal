@@ -1,0 +1,104 @@
+{{extend 'newlayout.html'}}
+<script type="text/javascript">
+function submitform()
+{
+  document.myform.submit();
+}
+</script>
+<head ><script>onload='j();'</script></head>
+<form id="myform" name="myform" action="vcomplaint" style="display:inline;">
+Filter By:
+    <select name="place" id="place"> 
+<option value="1">Filter By</option>
+
+<option value="Carpenter">Carpenter</option>
+<option value="Plumber">Plumber</option>
+<option value="Electrician">Electrician</option>
+<option value="Other">Other</option>
+<option value="1">All</option>
+</select>
+<script type="text/javascript" src="web2py.js">
+</script>
+
+    {{if start==None:}}{{start=""}}{{pass}}
+    {{if end==None:}}{{end=""}}{{pass}}
+
+
+    Start Date:<input type="date" id="start" name="start" class="date" value='{{=start}}'>
+    End Date:<input type="date" id="end" name="end" class="date" value='{{=end}}'>
+<input type="submit" value="Submit">
+</form><h2>{{=filtered_by}}</h2>
+
+
+
+     <script>
+    function poi()
+        {
+            
+            
+            window.location="../default/listing.pdf?function=vcomplaint&"+"place={{=filtered_by}}";
+        }
+            function poi1()
+        {
+            
+            
+            var k=document.URL;
+            var n=k.split("?");
+            if(n[1]==undefined)
+            window.location="../default/vcomplaint.csv";
+            else
+            window.location="../default/vcomplaint.csv?"+n[1];
+    
+            }
+
+</script><h2><div style="font-size:200;" id="aaa" ></div></h2>
+ <!--   <a onclick="poi()" style="cursor:pointer;">PDF</a>  <a onclick="poi1()" style="cursor:pointer;">CSV</a>    -->
+
+
+
+
+
+<body >
+
+<table border="1" width="100%" align="center" name="d">
+<tr>
+  <th>Sr.No</th>
+  <th>User Name</th>
+    <th>Room No.</th>
+  <th>Access</th>
+  <th>Category </th>
+  <th>Body </th>
+  <th>Date </th>
+  <th>Time</th>
+    <th>Available Time</th>
+
+</tr>
+ 
+ {{c=1}}
+  {{for row in complaints:}}
+ 
+  <tr>
+  <td>{{=c}} </td>
+  {{c=c+1}}
+  <td>{{=row.User}} </td>
+      <td>{{=row.room}}</td>
+  <td>{{=row.access}} </td>
+  <td>{{=row.category}} </td>
+  <td>{{=row.complaint_body}} </td>
+  <td>{{=row.Date}} </td>
+  <td>{{=row.Time}} </td>
+      <td>{{=row.AvailableTime}}</td>
+
+  </tr>
+  {{pass}}
+</table>
+{{pass}}
+
+<script type="text/javascript">
+    function j()
+         {
+         qa=document.getElementById("aaa");
+             qa.innerHTML='Total no of complaint: {{=c-1}}';
+         }
+
+</script>

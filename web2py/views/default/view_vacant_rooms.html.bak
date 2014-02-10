@@ -1,0 +1,15 @@
+{{extend 'newlayout.html'}}
+<h2><a href='#'>List Of Vacant Rooms:</a> </h2>
+{{    form=db().select(db.vacant_rooms.ALL)  }}
+<table width="80%" border="1" style="text-align:center" align="center">
+<tr>
+    <td>Room no</td> <td>Hostel</td>  </tr>
+{{for line in form:}}
+ <tr>
+    <td> {{=line.room_no}}</td> <td>{{=line.hostel}}</td>  
+
+ 
+    </tr>
+    {{pass}}
+
+</table>

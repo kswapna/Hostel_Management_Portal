@@ -1,0 +1,10 @@
+{{extend 'newlayout.html'}}
+<h2 style="display:inline">Add:</h2>
+<form> Hostel: <input type="text" name="hostel" style="display:inline"> Room no:<input type="text" name="room_no" style="display:inline"><input type="submit" value="Add vacant room" style="display:inline"></form>
+
+<table border="1" width="80%"  style="text-align:center;">
+    <tr> <td>Sr.No</td>  <td>Hostel</td>  <td>Room no</td>  <td>Date</td> <td>Remove</td> </tr>
+    {{COUNTER=0}}   {{for f in form:}} {{COUNTER=COUNTER+1}}
+    <tr>  <td>  {{=COUNTER}} </td>   <td>{{=f.hostel}}</td>  <td>{{=f.room_no}}</td>   <td>{{=f.date}} </td> <td>{{=A('remove this',_href=URL(r=request,f='delete_vacant_rooms',args=f.id))}}</td> </tr>
+    {{pass}}
+</table>

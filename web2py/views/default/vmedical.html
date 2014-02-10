@@ -1,0 +1,44 @@
+{{extend 'newlayout.html'}}
+
+
+<form id="tabel" name="tabel" action="markcom_med">
+
+<table border="1" width="100%" align="center" name="d">
+<tr>
+  <th>Sr.No</th>
+  <th>User Name</th>
+  <th>Doctor</th>
+  <th>Date </th>
+  <th>Time</th>
+      <th>Mobile </th>
+
+    <th>Confirm</th>
+</tr>
+ {{c=1}}
+  {{for row in form:}}
+ 
+  <tr>
+  <td>{{=c}} </td>
+  {{c=c+1}}
+  <td>{{=row.posted_by}} </td>
+  <td>{{=row.Doctor}} </td>
+  <td>{{=row.Date}} </td>
+  <td>{{=row.Time}} </td>
+    <td>{{=row.mobile}} </td>
+
+  <td align="center"><input type="checkbox" name="option"  value="{{=row.id}}" size="33"/></td>
+  </tr>
+  {{pass}}
+</table>
+{{pass}}
+    <br />
+<input type="submit" value="Confirm" style="float:right;"/>
+
+</form>
+<script type="text/javascript">
+
+function mark()
+{
+  document.table.submit();
+}
+</script>

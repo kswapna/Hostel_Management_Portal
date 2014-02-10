@@ -1,0 +1,28 @@
+{{extend 'newlayout.html'}}
+Promote user:<br/><br/>
+<form id="myform" name="myform" action="promote" style="display:inline">
+Email_ID <input type="text" name="id"><br/><br/>
+From :
+<select name="fro" id="fro"> 
+<option value="admin">Admin</option>
+
+<option value="staff">Staff</option>
+
+<option value="puser">Puser</option>
+<option value="nuser">User</option>
+
+</select>
+<br/><br/>
+To :
+<select name="to" id="to"> 
+<option value="admin">Admin</option>
+
+<option value="staff">Staff</option>
+
+<option value="puser">Puser</option>
+<option value="nuser">User</option>
+
+</select>
+<br/><br/>
+<input type="submit" value="Submit">
+</form>

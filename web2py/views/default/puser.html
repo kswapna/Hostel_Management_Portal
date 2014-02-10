@@ -1,0 +1,379 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+
+Design by Free CSS Templates
+http://www.freecsstemplates.org
+Released for free under a Creative Commons Attribution 2.5 License
+
+Title      : Interlude
+Version    : 1.0
+Released   : 20080903
+Description: A multi-column, fixed-width design for 800x600 resolutions.
+
+-->
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  
+  {{if db(db.poll.flag==0).select(db.poll.ALL) or db(db.news_feed.flag==0).select(db.news_feed.ALL) :}} 
+<script>
+window.onload=init;
+function init()
+{
+alert("There Are Pending Requests");
+window.location="requests";
+}
+
+
+</script>
+{{pass}}
+  
+  <title>
+   {{=response.title or request.application}}
+  </title>
+   <script src="{{=URL('static','js/form.js')}}"></script>  
+
+  {{response.files.append(URL(request.application,'static','plugin_layouts/layouts/Interlude/default.css'))}}
+  {{response.files.append(URL('static','plugin_layouts/superfish.js'))}}
+  {{include 'web2py_ajax.html'}}
+  <style>
+ul.web2py-menu-vertical { width: 150px; position: relative; top:1em; left:1em;  z-index:30; border:0; margin:0; padding: 0; list-style: none; text-decoration: none;}
+ul.web2py-menu-vertical li { margin:0; padding:0; border:0; width: 150px; background: black; text-align:left;}
+ul.web2py-menu-vertical li a { margin:0; padding: 1px 3px 1px 3px; border:0; width: 144px; color: white; font-size:12px;}
+div.flash { position: fixed; float: right; padding: 10px; top: 10px; right: 30px; opacity: 0.75; margin: 10px 10px 10px 10px; text-align: center; clear: both; color: #fff; font-size: 11pt; text-align: center; vertical-align: middle; cursor: pointer; background: black; border: 2px solid #fff; -moz-border-radius: 5px; -webkit-border-radius: 5px; z-index: 2; }
+div.error { background-color: red; color: white; padding: 3px; }
+.auth_navbar { text-align:right; z-index:20; position: absolute; top: 2px; right:30px; border:0; padding:0 }
+  </style>
+ </head>
+ <body>
+   <div style="float:right; margin-right:3.5em; margin-top:2em; font-size: 17pt; ">
+
+  <form  name="searchform" id="fm" >
+
+<select name="cars" id="df" onchange="ls()">
+<option value="name">NAME</option>
+<option value="rollno">ROLL NO</option>
+<option value="roomno">ROOM NO</option>
+
+</select><span id="sp">     </span>
+     <input type="button" onclick="s()" value="submit"/> 
+
+      <br />
+
+  
+<input type="text" name="name" id="name" autocomplete="off"/> 
+
+<div  id="suggestions"
+      class="suggestions"></div>
+</form>
+    </div>
+    <style>
+#suggestions { position: relative; }
+.suggestions { background: white;  }
+.suggestions DIV { padding: 2px 4px 2px 4px; }
+</style>
+
+
+     <script>
+
+
+
+         $("#name").keyup(function(event){
+    if(event.keyCode == 13){
+        s();
+    }
+          var sp=document.getElementById("df");
+
+
+        if(sp.value=="name")
+        {
+        ajax('month_selector', ['name'], 'suggestions')
+        }
+    }
+);
+     </script>
+  <!-- start header -->
+
+ <!-- {{try:}}{{=auth.navbar(action=URL('default','user'))}}{{except:pass}}-->
+
+
+
+
+
+
+
+
+
+
+
+<script>
+var y2=document.getElementById("sp");
+function ls()
+{
+var x=document.getElementById("df");
+
+if(x.value=="roomno")
+{y2.innerHTML='<select name="hostel" id="df1" ><option value="OBH">OBH</option><option value="GH">GH</option>'+
+'<option value="NBH">NBH</option><option value="BU">BU</option></select>';
+}
+else
+y2.innerHTML="   ";
+
+}
+
+</script>
+<script>
+    function s()
+    {
+	var k=document.getElementById('fm');
+    var sp=document.getElementById("df");
+
+
+        if(sp.value=="name")
+        {
+        k.action="searchbyname";
+        document.searchform.submit();
+        }
+        else if (sp.value=="rollno")
+            {
+             k.action="searchbyroll";
+        document.searchform.submit();
+            }
+             else if (sp.value=="roomno")
+            {
+             k.action="searchbyroom";
+        document.searchform.submit();
+            }
+
+    }
+
+
+    </script>
+
+
+  
+  
+  
+  
+  
+  
+  
+  <!-- start header -->
+  <div id="header">
+   <div id="logo">
+    <h1>
+     {{#=response.title or reque}}
+     hostel portal
+    </h1>
+
+   </div>
+   <div id="menu">
+    {{=MENU(response.student,_class='web2py-menu')}}
+    
+    
+    
+    
+
+    
+
+    <script>
+      jQuery(document).ready(function(){jQuery('ul.web2py-menu').superfish({delay:400});});
+    </script>
+   </div>
+  </div>
+  <hr />
+  <!-- end header -->
+  
+  
+  <!-- start page -->
+  <div id="wrapper">
+   <div id="page">
+    <!-- start content -->
+    <div id="content">
+     <div class="flash">{{=response.flash or ''}}</div>
+     
+        
+       
+
+      <!--  <h2 style="float:right;margin:10px 40px">{{=A('Add News Feed',_href=URL(r=request,f='add_news_feed'))}}</h2>        <a onclick="z()" style="cursor:pointer; font-size:18px;" >Request News</a><br />
+-->
+        <p style="font-size:18px">    {{=A('Add News Feed',_href=URL(r=request,f='student',args="rnf"))}}   </p>
+        <span id ="bh" >{{if variable==1:}}{{=form}}
+            {{=A('Cancel',_href=URL(r=request,f='student'))}}<br />
+         {{pass}}</span>
+
+ 
+ <a onclick="z1()" style="cursor:pointer; font-size:18px;">Add A New Poll</a><br /><br />
+        <form id ="bh1"  action="sr1" style="display:none"><input type="text" value="" name="question" placeholder="Question" size="80"/><br /><span id="t"></span><input type="button" id="addButton" value="new"/><input type="submit" id="submit" value="submit"/><br /></form>
+
+        <div id="target" action="sr"></div> <script src="{{=URL('static','js/form.js')}}"></script>
+<script>window.onload = init;
+function init() {
+
+ {{if db(db.poll.flag==0).select(db.poll.ALL) or db(db.news_feed.flag==0).select(db.news_feed.ALL) :}} 
+
+
+alert("There Are Pending Requests");
+window.location="requests";
+
+
+
+{{pass}}
+
+var button = document.getElementById("addButton");
+var takeinp = document.getElementById("Submit");
+button.onclick = handleButtonClick;
+$('#bh1').ajaxForm(function() {
+                $('#bh1').slideUp();
+   
+
+            });
+
+}
+count=1;
+function handleButtonClick() {
+    $('#t').append('<input type="text" name="q1Options" id="q1" value="" placeholder="option"/></br>');
+
+}
+function z1()
+    {
+
+    $('#t').empty();
+    $("#bh1").slideToggle();
+
+    }
+
+
+        </script>
+ 
+ 
+ <div>       
+       
+<h1>&nbsp;&nbsp;News Feed</h1>
+
+
+{{ooo=0}}
+<div style="float: right;margin:0px 45px">
+
+Logged in as {{=A(session.name,_href=URL('viewprofile',args=session.roll_no))}}
+       
+    <h3 style="display:inline;">    {{=A('Logout',_href=URL(r=request,f='logout'))}}</h3>
+
+
+<table width=415 cellpadding="10" border="0" style='table-layout:fixed' >
+<col width=250>
+<col width=165>
+{{for p in polls:}}{{if p.flag==1:}}{{ooo=ooo+1}}
+<tr>
+
+<td style="word-wrap: break-word; ">
+<h2 style="display:inline;">
+{{=p.question}} </h2>
+&nbsp;&nbsp;
+
+
+
+<form id="form{{=ooo}}" >
+{{options=db(db.options.qid==p.id).select(db.options.ALL)}}<br/>
+{{optionno=0}}
+{{for o in options:}}
+{{optionno=optionno+1}}
+
+{{if not db(db.vote.qid==p.id)(db.vote.voted_by==session.name).select(db.vote.ALL):}}
+
+
+<input type="radio" name="option" id="{{=ooo}}sss{{=optionno}}" value="{{=o.id}}">{{=o.option}}<br>
+{{else:}}
+ {{=optionno}}. {{=o.option}}<br />
+ {{pass}}{{pass}}
+  {{if not db(db.vote.qid==p.id)(db.vote.voted_by==session.name).select(db.vote.ALL):}}
+
+    <br />
+<input type="submit" id="submit{{=ooo}}" value="Submit">
+{{else:}}
+<p>You have already voted!!</p>
+{{pass}}
+</form>
+</td>
+
+<td align="center"><div id="graphDiv{{=ooo}}"></div></td>
+
+</tr>{{pass}}{{pass}}
+</table>
+</div>
+
+
+{{for n in newsfeed:}}{{if n.flag==1:}}
+{{if n.image:}}
+        <img src="{{=URL(f='download',args=n.image)}} ",  align="left" HSPACE=13 />{{pass}}
+<h2 style="display:inline; margin-left:1em"> {{=n.Title}}</h2>&nbsp;&nbsp;
+<h3 style="display:inline;"> by {{=n.posted_by}} </h3>
+        <b> <p style="margin-right:48em; margin-left:1em;text-align:justify "> {{=n.description}}</b> <br /><br /><br /><br /><br />{{pass}}
+
+
+<p>
+
+{{pass}}{{ppp=0}}
+{{for p in polls:}}{{if p.flag==1:}}
+<p>{{ppp=ppp+1}}
+
+    
+<!--[if IE]><script src="{{=URL('static','js/excanvas.js')}}"></script><![endif]-->
+    <script src="{{=URL('static','js/othero.js')}}"></script>
+
+<script>(function () {
+
+function createCanvas(divName) {
+
+var div = document.getElementById(divName);
+var canvas = document.createElement('canvas');
+div.appendChild(canvas);
+if (typeof G_vmlCanvasManager != 'undefined') {
+canvas = G_vmlCanvasManager.initElement(canvas);
+} 
+var ctx = canvas.getContext("2d");
+return ctx;
+}
+
+var ctx = createCanvas("graphDiv"+{{=ppp}});
+var graph = new BarGraph(ctx);
+graph.maxValue = 30;
+graph.margin = 2;
+
+{{var=0}}
+var update=new Array();
+
+{{options=db(db.options.qid==p.id).select(db.options.ALL)}}
+{{for o in options:}}{{var=var+1}}
+graph.colors.push("red");
+graph.xAxisLabelArr.push("O {{=var}}");{{if p.counter!=0:}}
+update.push({{=(30*o.counter)/p.counter}}){{pass}}
+{{pass}}graph.width={{=var}}*30;
+graph.update(update);
+graph.update.clear();
+update.clear();
+graph.colors.clear();
+graph.xAxisLabelArr.clear();
+
+aaa.appendchild(n);
+}());</script><br />{{pass}}{{pass}}
+
+         </div>
+
+        {{#chetta}}
+       
+    </div>
+    <!-- end content -->
+    <!-- start sidebar -->
+    
+    <br style="clear: both;" />
+   </div>
+  </div>
+  <!-- end page -->
+<!--chetta-->>
+ 
+ 
+ 
+ </body>
+</html>

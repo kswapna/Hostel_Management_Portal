@@ -1,0 +1,29 @@
+{{extend 'newlayout.html'}}
+<table border="1" width="100%" align="center">
+<tr>
+  <th>Sr.No</th>
+  <th>User Name</th>
+  <th>Access</th>
+  <th>Category </th>
+  <th>Body </th>
+  <th>Date </th>
+  <th>Time</th>
+
+</tr>
+  {{for row in complaints:}}
+  {{c=1}}
+  <tr>
+  <td>{{=c}} </td>
+  {{c=c+1}}
+  <td>{{=row.User}} </td>
+  <td>{{=row.access}} </td>
+  <td>{{=row.category}} </td>
+  <td>{{=row.complaint_body}} </td>
+  <td>{{=row.Date}} </td>
+  <td>{{=row.Time}} </td>
+  
+  </tr>
+  {{pass}}
+</table>
+{{pass}}
+</ul>

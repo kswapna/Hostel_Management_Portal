@@ -1,0 +1,39 @@
+{{extend 'newlayout.html'}}
+<h2> Laptop details of a student {{if roll!=None:}} with roll no &nbsp;{{=roll}} {{pass}}</h2>
+<form>
+    Roll no: <input type="text" name="roll" value="{{if roll!=None:}}{{=roll}}{{pass}}" >
+    <input type="submit" value="search" />
+</form>
+<br />
+<br />
+
+{{if roll!=None:}}
+
+<form  name="myform" action="add_laptop" style="display:inline;">
+    <input type="hidden" name="roll" value="{{=roll}}" />
+Company: <select name="company"> 
+<option value="ACER">ACER</option>
+<option value="APPLE">APPLE</option>
+<option value="Asus">Asus</option>
+<option value="COMPAQ">COMPAQ</option>
+<option value="DELL">DELL</option>
+<option value="HP">HP</option>
+<option value="IBM">IBM</option>
+<option value="SAMSUNG">SAMSUNG</option>
+<option value="SONY">SONY</option>
+<option value="TOSHIBHA">TOSHIBHA</option>
+<option value="other">OTHER</option>
+</select>
+    Service tag:<input type="text" name="service_tag" />
+    <input type="submit" value="Add laptop detail">
+</form>
+<br /><br />
+<table border="1"  width="80%" style="text-align:center">
+    <tr>    <th>Sr.No</th>     <th>Roll No</th>  <th>Company</th> <th>Service Tag</th>    <th>Delete</th>  <tr/>
+    {{i=0}}   {{for f in form:}}     {{i=i+1}}
+    <tr>    <td> {{=i}}.</td>  <td>{{=f.roll_no}}</td>   <td>{{=f.company}}</td>  <td>{{=f.service_tag}}</td>    <td>{{=A('Delete it',_href=URL(r=request,f='delete_laptop',args=[f.id,f.roll_no]))}}</td>  </tr>
+    {{pass}}
+</table>
+
+
+{{pass}}

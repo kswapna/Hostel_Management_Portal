@@ -1,0 +1,49 @@
+{{extend 'newlayout.html'}}
+<!--<a href="{{#=URL('../../../httpserver.log')}}">aa</a>-->
+
+
+
+
+    <div style="float:right;margin-right:26px;">
+
+        <h2>Add a new student:</h2>
+         {{=form}}
+        
+    </div>
+
+<h2>Promote user:</h2>
+<form id="myform" name="myform" action="promote" style="display:inline">
+Email_ID <input type="text" name="id"><br/><br/>
+From :
+<select name="fro" id="fro"> 
+<option value="admin">Admin</option>
+
+<option value="staff">Staff</option>
+
+<option value="puser">Puser</option>&nbsp;
+<option value="nuser">User</option>
+
+</select>
+<br/><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;To :
+<select name="to" id="to"> 
+<option value="admin">Admin</option>
+
+<option value="staff">Staff</option>
+
+<option value="puser">Puser</option>
+<option value="nuser">User</option>
+
+</select>
+<br/><br/>
+<input type="submit" value="Change previlage">
+</form>
+<br /><br />
+<h2>Edit a students profile:</h2>
+
+<form action="editprofile">
+    Roll no. of student: <input type="text" value="" name="roll" />
+    <input type="submit" value="edit profile"/></form>
+    
+Import STUDENT DETAILS AS CSV FILE:
+<input type="file"/>

@@ -1,0 +1,6 @@
+{{extend 'newlayout.html'}}
+<div style="float:right; margin-right:3em;  font-size: 15pt; ">
+    {{=A('Outing Records',_href=URL(r=request,f='view_student_out_details'))}}
+</div>
+<h2>Enter Outing Details:</h2>
+{{=form}}

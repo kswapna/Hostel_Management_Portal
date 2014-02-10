@@ -1,0 +1,93 @@
+{{extend 'newlayout.html'}}
+
+{{if grp!=None:}}
+<h2>Showing results of blood grp {{=grp}}</h2>
+{{else:}} <h2>Search for students of specific blood group</h2>
+{{pass}}
+<form>
+<select name="blood_grp" value="A-"> 
+<option value="A+">A+</option>
+<option value="A-">A-</option>
+<option value="B+">B+</option>
+<option value="B-">B-</option>
+<option value="AB+">AB+</option>
+<option value="AB-">AB-</option>
+<option value="O+">O+</option>
+<option value="O-">O-</option>
+</select>
+    {{if roll==None:}}{{roll=""}}{{pass}}
+
+    
+    With Roll No.: <input type="number" name="roll_no" value="{{=roll}}"><br>
+    <tab><input type="submit" name="submit" value="Submit" align="center"></tab>
+    
+</form>
+
+
+
+{{if grp!=None:}}
+
+
+
+<table border="1" width="80%" align="center">
+<tr>
+  <th style="height: 30px;">SNo.</th>
+  <th>Name</th>
+  <th>Roll No. </th>
+  <th>Room No.</th>
+  <th>Branch</th>
+  <th>Email</th>
+  <th>Blood Group</th>
+  <th>Hostel</th>
+  </tr>
+{{c=0}}
+  {{for row in result:}}
+  {{c=c+1}}
+  <tr>
+  <td style="height: 30px;"> {{=c}} </td>
+  <td>{{=A(row.name, _href=URL("viewprofile",args=row.roll_no))}} </td>
+  <td>{{=row.roll_no}} </td>
+  <td>{{=row.room_no}} </td>
+  <td>{{=row.branch}}</td>
+  <td>{{=row.email}} </td>
+  <td>{{=row.blood_grp}} </td>
+  <td>{{=row.hostel}}</td>
+  </tr>
+  {{pass}}
+</table>
+{{pass}}
+
+
+
+<br /><br />
+{{ doctor=db().select(db.docs.ALL)}}
+
+<h3>Here are the details of the doctors:</h3>
+<table border="1" width="80%" align="center" style="text-align:center" name="d">
+<tr>
+  <th>Sr.No</th>
+  <th>Doctor Name</th>
+  <th>Doctor Number</th>
+  <th>Available Day and Time</th>
+
+
+</tr>
+ {{c=1}}
+  {{for row in doctor:}}
+ 
+  <tr>
+  <td>{{=c}} </td>
+  {{c=c+1}}
+  <td>{{=row.Doctor_Name}} </td>
+  <td>{{=row.Phone_No}} </td>
+  <td>{{=row.Available_day_and_time}} </td>
+
+ 
+  </tr>
+  {{pass}}
+</table><br /><br />
+
+
+
+You can request for a doctor's appointment ny clicking here
+{{=A('Click me',_href=URL(r=request,f='medreq'))}}

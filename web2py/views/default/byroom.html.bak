@@ -1,0 +1,6 @@
+{{extend 'newlayout.html'}}
+{{=BEAUTIFY(response._vars)}}
+<form action="searchbyroom">
+Enter Roll No.: <input type="number" name="room"><br>
+<tab><input type="submit" name="submit" value="Submit" align="center">
+</form>

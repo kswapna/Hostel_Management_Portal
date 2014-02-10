@@ -1,0 +1,5 @@
+{{extend 'newlayout.html'}}
+  <h2> {{=A('Search by Name', _href='byname')}}</h2>
+ <h2> {{=A('Search by Roll NO.', _href='byroll')}}</h2>
+ <h2> {{=A('Search by Room NO.', _href='byroom')}}</h2>
+ {{=response._vars)}}

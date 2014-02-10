@@ -1,0 +1,13 @@
+{{extend 'newlayout.html'}}
+<div style="float:right; margin-right:2;">
+    {{  name=db(db.students.roll_no==roll).select(db.students.name)}}
+{{image=db(db.students.roll_no==roll).select(db.students.file)}}
+<img src="{{=URL(f='download',args=image[0].file)}} " width="200"/>
+</div>
+<h2>Laptop details of student {{=name}} with {{=roll}}</h2>
+<table border="1"  width="80%" style="text-align:center; ">
+    <tr>    <th>Sr.No</th>     <th>Roll No</th>  <th>Company</th> <th>Service Tag</th>      <tr/>
+    {{i=0}}   {{for f in form:}}     {{i=i+1}}
+    <tr>    <td> {{=i}}.</td>  <td>{{=f.roll_no}}</td>   <td>{{=f.company}}</td>  <td>{{=f.service_tag}}</td>     </tr>
+    {{pass}}
+</table>

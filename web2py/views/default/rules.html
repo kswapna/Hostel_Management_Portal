@@ -1,0 +1,32 @@
+{{extend 'newlayout.html'}}
+<table border="1" width="80%" align="center" name="d">
+<col width="5%">
+<col width="75%">
+<col width="10%">
+<col width="10%">
+<tr>
+  <th>Sr.No</th>
+  <th>Rules</th>
+  <th style="text-align: center;">Delete</th>
+ <th style="text-align: center;">Update</th>
+
+</tr>
+ {{c=1}}
+  {{for row in rules:}}
+
+  <tr>
+  <td>{{=c}} </td>
+  {{c=c+1}}
+  <td>{{=row.rule}} </td>
+  <td style="text-align: center;"> {{=A("X", _href=URL("delrule",args=row.id),_style="color:red;")}}</td>
+  <td style="text-align: center;"> {{=A("Edit", _href=URL("uprule",args=row.id),_style="color:green;")}}></td>
+  
+  </tr>
+  {{pass}}
+</table>
+
+<br>
+<br>
+<div style="padding-left: 100px;">
+{{=form}}
+</div>

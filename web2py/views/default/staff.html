@@ -1,0 +1,30 @@
+{{extend 'newlayout.html'}}
+
+<div style="float:right; margin-right:4em; margin-top:2em; font-size: 15pt; ">
+    {{=A('Laptop Outing Records',_href=URL(r=request,f='view_laptop_out_details'))}}
+</div>
+
+<script>
+function s()
+    {
+    document.getElementById("menu").innerHTML='{{=MENU(response.staff,_class='web2py-menu')}}    ' 
+    };
+</script>
+
+
+<body onload="s()";></body>
+<h1>Enter laptop Outing Details:
+</h1>
+<table  width="80%" align="center" ><tr>
+  <td> 
+  <h2>Personal laptop:
+</h2>
+    
+    {{=form}}</td>
+
+
+    <td>
+        <h2>Other's laptop:
+</h2>
+    {{=form2}}</td>
+    </table>

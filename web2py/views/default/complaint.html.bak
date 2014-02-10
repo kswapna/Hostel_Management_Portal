@@ -1,0 +1,163 @@
+{{extend 'newlayout.html'}}
+{{    db.complaint.Flag.default=1
+}}
+{{  form = SQLFORM(db.complaint)}}
+{{  if form.process().accepted:}}
+{{      response.flash = 'your complaint is registered'}}{{pass}}
+<script>
+    
+    function f()
+    {
+                
+        a=document.getElementById("kk");
+        a.innerHTML='  {{=form}} <br /> <input type="button" value="Cancel" onClick="fq();"  /> <br /><br />  ';
+        $("#kk").slideDown();
+    }
+    
+       function fq()
+    {
+                
+        a=document.getElementById("kk");
+         $("#kk").slideUp(500);
+         wait(500);
+        a.innerHTML="";
+               
+
+        
+    }
+</script>
+<h3>{{=A('Regeister Complaint',_href=URL(r=request,f='regcomplaint'))}}
+</h3>
+
+
+
+<span id="kk">
+</span>
+
+
+
+
+<h2>Complaints posted by you:</h2>
+<script type="text/javascript">
+function submitform()
+{
+  document.myform.submit();
+}
+</script>
+<form id="myform" name="myform" action="complaint" style="display:inline">
+<select name="place" onchange="submitform()" id="place"> 
+<option value="">Filter By</option>
+
+<option value="All">All</option>
+
+<option value="Carpenter">Carpenter</option>
+<option value="Plumber">Plumber</option>
+<option value="Electrician">Electrician</option>
+<option value="other">Other</option>
+</select>
+</form><h2 style="display:inline" >: {{=filtered_by}}</h2>
+<br />
+<br />
+
+<p id="demo"></p>
+<script type="text/javascript">
+function myFunction()
+{
+var x;
+var r=confirm("Are u sure you want to remove this complaint");
+if (r==true)
+  {
+    window.location._href=URL("deafult.py/metcomplaint")
+    x="OK";
+<!--  <a href=URL("delcomplaint",args=row.id)>Text to Click</a>-->
+
+  }
+else
+  {
+  x="C";
+  }
+document.getElementById("demo").innerHTML=row.id;
+}
+</script>
+<table border="1" width="80%" align="center" style="text-align:center">
+    <tr>
+  <th>Sr.No</th>
+  <th>Access</th>
+  <th>Category </th>
+  <th>Body </th>
+  <th>Date </th>
+  <th>Time</th>
+ <!-- <th style="text-align: center;">Delete</Th>-->
+
+</tr>
+{{c=0}}
+  {{for row in complaints:}}
+  {{c=c+1}}
+  <tr>
+  <td>{{=c}} </td>
+  <td>{{=row.access}} </td>
+  <td>{{=row.category}} </td>
+  <td>{{=row.complaint_body}} </td>
+  <td>{{=row.Date}} </td>
+  <td>{{=row.Time}} </td>
+  <!--<td style="text-align: center;"> {{=A("X", _href=URL("delcomplaint",args=row.id),_style="color:red;",_class="button",onclick="myFunction()")}}</font></td>-->
+
+  <!--<td style="text-align: center;"> {{=A("YES",_style="color:green;",_class="button",onclick="myFunction(row.id)")}}</font>
+  <td><button onclick="myFunction()", id="demo">Done</button></td>
+  <p id="demo"></p>-->
+  </tr>
+  {{pass}}
+</table>
+{{pass}}
+
+
+<h2>Public Complaints:</h2>
+<script type="text/javascript">
+function submitform2()
+{
+  document.myform2.submit();
+}
+</script>
+
+<form id="myform2" name="myform2" action="complaint" style="display:inline">
+<select name="place2" onchange="submitform2()" id="place2"> 
+<option value="">Filter By</option>
+
+<option value="All">All</option>
+
+<option value="Carpenter">Carpenter</option>
+<option value="Plumber">Plumber</option>
+<option value="Electrician">Electrician</option>
+<option value="other">Other</option>
+</select>
+</form>: <h2 style="display:inline">{{=filtered_by2}}</h2>
+
+<br />
+<br />
+
+
+<table border="1" width="80%" align="center" style="text-align:center">
+<tr>
+  <th>Sr.No</th>
+  <th>User Name</th>
+  <th>Category </th>
+  <th>Body </th>
+  <th>Date </th>
+  <th>Time</th>
+
+    </tr>{{c=0}}
+  {{for row in complaints2:}}
+  {{c=c+1}}
+  <tr>
+  <td>{{=c}} </td>
+  
+  <td>{{=row.User}} </td>
+  <td>{{=row.category}} </td>
+  <td>{{=row.complaint_body}} </td>
+  <td>{{=row.Date}} </td>
+  <td>{{=row.Time}} </td>
+  
+  </tr>
+  {{pass}}
+</table>
+{{pass}}

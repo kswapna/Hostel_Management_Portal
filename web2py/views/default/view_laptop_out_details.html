@@ -1,0 +1,10 @@
+{{extend 'newlayout.html'}}
+<form style="display:inline" >
+    Number of Records to be shown: <input  size="1" type="text" name="number" value="{{=number}}" /> <input type="submit" value="submit"/> </form>
+<br /><br />
+<table border="1"  width="80%" style="text-align:center">
+    <tr>    <th>Sr.No</th>     <th>Roll No</th><th>Company</th> <th> ServiceTag</th> <th>Time</th> <th>Reason</th>      <tr/>
+    {{i=0}}   {{for f in form:}}     {{i=i+1}}   {{tag=db(db.laptop.roll_no==f.roll_no).select(db.laptop.ALL)}}
+    <tr>    <td> {{=i}}.</td>  <td>{{=f.roll_no}}</td> <td>{{for t in tag:}}{{=t.company}}&nbsp;{{pass}} </td> <td>{{for t in tag:}}{{=t.service_tag}} &nbsp;{{pass}}</td>            <td>{{=f.out_time}}</td>  <td>{{=f.reason}}</td>      </tr>
+    {{pass}}
+</table>

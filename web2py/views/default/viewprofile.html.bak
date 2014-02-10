@@ -1,0 +1,45 @@
+{{extend 'layout.html'}}
+<div>
+<div>
+{{for row in prof:}}
+    {{=IMG( _src=URL('download',args=row.file), _width="250px", _style="float: left; padding: 0px 50px 30px 30px;align: top")}}
+    {{pass}}
+</div>
+<div>
+<table width="100%">
+  {{for row in prof:}}
+  <tr>
+  <tr>
+  <td style="height: 50px;"><b>NAME:</b></td>
+  <td>{{=row.name}}</td>
+  </tr>
+  <tr>
+  <td style="height: 50px;"><b>Roll No.:</b></td>
+  <td>{{=row.roll_no}}</td>
+  </tr>
+  <tr>
+  <td style="height: 50px;"><b>Room No.:</b></td>
+  <td> {{=row.room_no}}</td>
+  </tr>
+  <tr>
+  <td style="height: 50px;"><b>Email ID:</b></td>
+  <td> {{=row.email}}</td>
+  </tr>
+  <tr>
+  <td style="height: 50px;"><b>Branch:</b></td>
+  <td> {{=row.branch}}</td>
+  </tr>
+  <tr>
+  <td style="height: 50px;"><b>Hostel:</b></td>
+  <td> {{=row.hostel}}</td>
+  </tr>
+  <tr>
+  <td style="height: 50px;"><b>Blood Group:</b></td>
+  <td> {{=row.blood_grp}}</td>
+  </tr>
+  {{pass}}
+</table>
+{{pass}}
+</ul>
+</div>
+</div>

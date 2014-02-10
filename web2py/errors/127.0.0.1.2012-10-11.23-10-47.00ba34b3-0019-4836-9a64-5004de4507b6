@@ -1,0 +1,21 @@
+(dp1
+S'output'
+p2
+S"<type 'exceptions.KeyError'> 'comment'"
+p3
+sS'layer'
+p4
+S'/home/kswapna/sem3/ssad/web2py/applications/hostel/controllers/default.py'
+p5
+sS'code'
+p6
+S"# -*- coding: utf-8 -*-\n### required - do no delete\n\ndef user(): return dict(form=auth())\ndef download(): return response.download(request,db)\ndef call(): return service()\n### end requires\n@auth.requires_login()\ndef index():\n    return dict()\n\ndef error():\n    return dict()\n    \n\ndef regcomplaint():\n    db.comment.user_id.default=auth.user.username\n    form = SQLFORM(db.complaint)\n    if form.process().accepted:\n        response.flash = 'your complaint is registered'\n    return dict(form=form)\n    \ndef complaint():\n    return dict()\n\nresponse._vars=response._caller(regcomplaint)\n"
+p7
+sS'snapshot'
+p8
+(dp9
+sS'traceback'
+p10
+S'Traceback (most recent call last):\n  File "/home/kswapna/sem3/ssad/web2py/gluon/restricted.py", line 205, in restricted\n    exec ccode in environment\n  File "/home/kswapna/sem3/ssad/web2py/applications/hostel/controllers/default.py", line 26, in <module>\n  File "/home/kswapna/sem3/ssad/web2py/gluon/globals.py", line 173, in <lambda>\n    self._caller = lambda f: f()\n  File "/home/kswapna/sem3/ssad/web2py/applications/hostel/controllers/default.py", line 17, in regcomplaint\n    db.comment.user_id.default=auth.user.username\n  File "/home/kswapna/sem3/ssad/web2py/gluon/dal.py", line 6343, in __getattr__\n    return self[key]\n  File "/home/kswapna/sem3/ssad/web2py/gluon/dal.py", line 6337, in __getitem__\n    return dict.__getitem__(self, str(key))\nKeyError: \'comment\'\n'
+p11
+s.

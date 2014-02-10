@@ -1,0 +1,63 @@
+{{extend 'newlayout.html'}}
+<!doctype html>
+<html lang="en">
+<head>
+<title>Webville Tunes</title>
+<meta charset="utf-8">
+<script>window.onload = init;
+function init() {
+var button = document.getElementById("addButton");
+var takeinp = document.getElementById("Submit");
+button.onclick = handleButtonClick;
+takeinp.onclick = handleButtonSubmit;
+}
+count=1;
+function handleButtonClick() {
+var n=document.createElement("br");
+
+var n2=document.createElement("b");
+n2.value="<b>jkjkj</b>";
+var li = document.createElement("input",type='text');
+li.placeholder ="new option";
+var newlabel = document.createElement("Label");
+var e="Option "+count;
+newlabel.innerHTML = e;
+
+count=count+1;
+
+var ul = document.getElementById("option");
+ul.appendChild(newlabel);
+ul.appendChild(n2);
+ul.appendChild(li);
+ul.appendChild(n);
+
+
+
+
+}
+function handleButtonSubmit() {
+var k="http://127.0.0.1:8000/hostel/default/sr";
+
+var o= document.getElementById('ques');
+k=k+"/"+o.value;
+var children = document.getElementById('option').getElementsByTagName('input');
+for(i=0;i<children.length;i++)
+{
+k=k+"/"+children[i].value;
+}
+
+window.location = k;
+}</script>
+<link rel="stylesheet" href="playlist.css">
+</head>
+<body>
+<form>
+<input type="text" id="ques" size="80" placeholder="Question">
+<ul id="option">
+</ul>
+</form>
+<input type="button" id="addButton" value=" add option">
+<input type="button" id="Submit" value="Submit">
+
+</body>
+</html>

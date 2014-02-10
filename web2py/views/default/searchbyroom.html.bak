@@ -1,0 +1,28 @@
+{{extend 'newlayout.html'}}
+<table border="1" width="1000" align="center">
+<tr>
+  <th style="height: 30px;">SNo.</th>
+  <th>Name</th>
+  <th>Roll No. </th>
+  <th>Room No.</th>
+  <th>Email</th>
+  <th>Blood Group</th>
+  <th>Hostel</th>
+  </tr>
+{{c=0}}
+  {{for row in result:}}
+  {{c=c+1}}
+  <tr>
+  <td style="height: 30px;"> {{=c}} </td>
+  <td>{{=A(row.name, _href=URL("viewprofile",args=row.roll_no))}} </td>
+  <td>{{=row.roll_no}} </td>
+  <td>{{=row.room_no}} </td>
+  <td>{{=row.email}} </td>
+  <td>{{=row.blood_grp}} </td>
+  <td>{{=row.hostel}}</td>
+  </tr>
+  {{pass}}
+</table>
+{{pass}}
+</ul>
+{{pass}}

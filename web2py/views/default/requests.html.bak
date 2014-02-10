@@ -1,0 +1,37 @@
+{{extend 'newlayout.html'}}
+<p>
+<h2>Requests for Polls:</h2></p>
+{{poll_i=0}}
+{{for poll in form1:}}
+{{poll_i=poll_i+1}}
+<p style="margin-left:1em;">
+Qusetion{{=poll_i}}. {{=poll.question}}
+<br />
+{{options=db(db.options.qid==poll.id).select(db.options.ALL)}}
+{{o_i=0}}
+{{for o in options:}}
+{{o_i=o_i+1}}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Option{{=o_i}}: {{=o.option}}
+<br />
+{{pass}}
+{{ =A('Add this poll',_href=URL(r=request,f='request_poll',args=[poll.id,1]))}}
+&nbsp;&nbsp;
+{{ =A('Delete this poll',_href=URL(r=request,f='request_poll',args=[poll.id,-1]))}}
+</p>
+{{pass}}
+
+<p>
+<h2>Requests for News Feed:</h2></p>
+{{poll_i=0}}
+{{for poll in form2:}}
+{{poll_i=poll_i+1}}
+<p style="margin-left:1em;">
+{{=poll_i}}.Title: {{=poll.Title}}
+<br />
+&nbsp;&nbsp;&nbsp;Description: {{=poll.description}}<br />
+&nbsp;&nbsp;&nbsp;Image:{{=poll.image}}<br />
+{{ =A('Add this NewsFeed',_href=URL(r=request,f='request_newsfeed',args=[poll.id,1]))}}
+&nbsp;&nbsp;
+{{ =A('Delete this NewsFeed',_href=URL(r=request,f='request_newsfeed',args=[poll.id,-1]))}}
+</p>
+{{pass}}
